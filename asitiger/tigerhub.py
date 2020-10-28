@@ -96,3 +96,6 @@ class TigerHub:
         coordinates = response.split(" ")[1:]
 
         return {axis: coord for axis, coord in zip(axes, coordinates)}
+
+    def who(self) -> List[str]:
+        return self.send_command(Commands.WHO.value).split("\r")
