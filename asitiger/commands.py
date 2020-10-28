@@ -9,4 +9,5 @@ class Commands(Enum):
     RDSTAT = "RS"
     SETHOME = "HM"
     STATUS = "/"
+    WHERE = "W"
     WHO = "WHO"

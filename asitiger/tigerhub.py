@@ -1,6 +1,6 @@
 import time
 from contextlib import contextmanager
-from typing import Dict
+from typing import Dict, List
 
 from asitiger.commands import Commands
 from asitiger.serialconnection import SerialConnection
@@ -81,3 +81,9 @@ class TigerHub:
                 card_address=card_address,
             )
         )
+
+    def where(self, axes: List[str]) -> dict:
+        response = self.send_command(f"{Commands.WHERE.value} {' '.join(axes)}")
+        coordinates = response.split(" ")[1:]
+
+        return {axis: coord for axis, coord in zip(axes, coordinates)}
