@@ -37,7 +37,6 @@ class SerialConnection:
 
     def send(self, data: bytes):
         self.reset_buffers()
-
         LOGGER.debug(f"Sending data: {data}")
         self.connection.write(data)
 
@@ -45,7 +44,7 @@ class SerialConnection:
         encoded_command = f"{command}\r".encode("ascii")
         self.send(encoded_command)
 
-    def read_response(self):
+    def read_response(self) -> str:
         response_bytes = self.connection.readline()
         LOGGER.debug(f"Received: {response_bytes}")
 
