@@ -1,6 +1,6 @@
 import time
 from contextlib import contextmanager
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from asitiger.commands import Commands
 from asitiger.serialconnection import SerialConnection
@@ -74,11 +74,20 @@ class TigerHub:
             f"{Commands.MOVE.value} {self.format_coordinates(coordinates)}"
         )
 
-    def set_led_brightness(self, brightness: int, card_address: int = None):
+    def set_led_brightness(
+        self, led_brightnesses: Union[Dict[str, int], int], card_address: int = None
+    ):
+
+        led_coords = (
+            {"X": led_brightnesses}
+            if isinstance(led_brightnesses, int)
+            else led_brightnesses
+        )
+        formatted_coords = self.format_coordinates(led_coords)
+
         self.send_command(
             self.command_with_address(
-                f"{Commands.LED.value} {self.format_coordinates({'X': brightness})}",
-                card_address=card_address,
+                f"{Commands.LED.value} {formatted_coords}", card_address=card_address,
             )
         )
 
