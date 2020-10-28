@@ -42,6 +42,10 @@ class TigerHub:
         yield
         self.poll_interval_s = old_poll_interval_s
 
+    @staticmethod
+    def command_with_address(command: str, card_address: int = None) -> str:
+        return f"{card_address}{command}" if card_address else command
+
     def send_command(self, command: str) -> str:
         self.connection.send_command(command)
         response = self.connection.read_response()
@@ -68,4 +72,12 @@ class TigerHub:
     def move(self, coordinates: Dict[str, float]):
         return self.send_command(
             f"{Commands.MOVE.value} {self.format_coordinates(coordinates)}"
+        )
+
+    def set_led_brightness(self, brightness: int, card_address: int = None):
+        self.send_command(
+            self.command_with_address(
+                f"{Commands.LED.value} {self.format_coordinates({'X': brightness})}",
+                card_address=card_address,
+            )
         )
