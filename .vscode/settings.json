@@ -1,0 +1,12 @@
+{
+  "editor.insertSpaces": true,
+  "files.associations": {
+    "*.py": "python"
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+  },
+  "python.formatting.provider": "black",
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+}
