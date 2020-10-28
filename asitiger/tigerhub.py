@@ -54,7 +54,7 @@ class TigerHub:
         return response
 
     def is_busy(self) -> bool:
-        return self.send_command(Commands.STATUS) == "B"
+        return self.send_command(Commands.STATUS.value) == "B"
 
     def wait_until_idle(self, poll_interval_s: float = None):
         poll_interval_s = poll_interval_s if poll_interval_s else self.poll_interval_s
@@ -63,9 +63,9 @@ class TigerHub:
             time.sleep(poll_interval_s)
 
     def home(self) -> str:
-        return self.send_command(Commands.HOME)
+        return self.send_command(Commands.HOME.value)
 
     def move(self, coordinates: Dict[str, float]):
         return self.send_command(
-            f"{Commands.MOVE} {self.format_coordinates(coordinates)}"
+            f"{Commands.MOVE.value} {self.format_coordinates(coordinates)}"
         )
