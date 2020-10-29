@@ -29,9 +29,27 @@ class TigerHub:
         return cls(SerialConnection(port, baud_rate), *tiger_args, **tiger_kwargs)
 
     @staticmethod
-    def format_coordinates(coordinates: Dict[str, float]):
+    def format_coordinate(
+        axis: str, value: Union[str, float], flag_overrides: List[str] = None
+    ) -> str:
+        value_is_flag = flag_overrides and value in flag_overrides
+
+        if value_is_flag:
+            return f"{axis}{value}"
+
+        return f"{axis}={value}"
+
+    @classmethod
+    def format_coordinates(
+        cls, coordinates: Dict[str, float], flag_overrides: List[str] = None
+    ):
         return " ".join(
-            map(lambda coord: f"{coord[0]}={coord[1]}", coordinates.items())
+            map(
+                lambda coord: cls.format_coordinate(
+                    coord[0], coord[1], flag_overrides=flag_overrides
+                ),
+                coordinates.items(),
+            )
         )
 
     @contextmanager
@@ -66,8 +84,8 @@ class TigerHub:
         while self.is_busy():
             time.sleep(poll_interval_s)
 
-    def home(self) -> str:
-        return self.send_command(Commands.HOME.value)
+    def home(self, axes: List[str]) -> str:
+        return self.send_command(f"{Commands.HOME.value} {' '.join(axes)}")
 
     def move(self, coordinates: Dict[str, float]):
         return self.send_command(
@@ -99,3 +117,8 @@ class TigerHub:
 
     def who(self) -> List[str]:
         return self.send_command(Commands.WHO.value).split("\r")
+
+    def set_home(self, axes: Dict[str, Union[str, int]]) -> str:
+        return self.send_command(
+            f"{Commands.SETHOME.value} {self.format_coordinates(axes, flag_overrides=['+'])}"
+        )
