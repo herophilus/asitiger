@@ -21,7 +21,7 @@ class TigerHub:
 
     @classmethod
     def from_serial_port(
-        cls, port: str, baud_rate: int, *tiger_args, **tiger_kwargs
+        cls, port: str, baud_rate: int = 115200, *tiger_args, **tiger_kwargs
     ) -> "TigerHub":
         return cls(SerialConnection(port, baud_rate), *tiger_args, **tiger_kwargs)
 
