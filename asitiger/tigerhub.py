@@ -3,16 +3,13 @@ from contextlib import contextmanager
 from typing import Dict, List, Union
 
 from asitiger.commands import Commands
+from asitiger.errors import Errors
 from asitiger.serialconnection import SerialConnection
 
 
 class TigerHub:
 
-    RESP_HEADER_FAILURE = ":N"
     DEFAULT_POLL_INTERVAL_S = 0.1
-
-    class CommandFailedError(Exception):
-        pass
 
     def __init__(
         self,
@@ -68,10 +65,7 @@ class TigerHub:
         self.connection.send_command(command)
         response = self.connection.read_response()
 
-        if response.startswith(self.RESP_HEADER_FAILURE):
-            raise self.CommandFailedError(
-                f'Command "{command}" failed with response: {response}'
-            )
+        Errors.raise_error_if_present(command, response)
 
         return response
 
