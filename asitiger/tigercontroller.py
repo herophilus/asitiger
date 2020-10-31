@@ -7,7 +7,7 @@ from asitiger.errors import Errors
 from asitiger.serialconnection import SerialConnection
 
 
-class TigerHub:
+class TigerController:
 
     DEFAULT_POLL_INTERVAL_S = 0.01
 
@@ -22,7 +22,7 @@ class TigerHub:
     @classmethod
     def from_serial_port(
         cls, port: str, baud_rate: int = 115200, *tiger_args, **tiger_kwargs
-    ) -> "TigerHub":
+    ) -> "TigerController":
         return cls(SerialConnection(port, baud_rate), *tiger_args, **tiger_kwargs)
 
     @staticmethod
