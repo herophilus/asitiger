@@ -9,7 +9,7 @@ from asitiger.serialconnection import SerialConnection
 
 class TigerHub:
 
-    DEFAULT_POLL_INTERVAL_S = 0.1
+    DEFAULT_POLL_INTERVAL_S = 0.01
 
     def __init__(
         self,
