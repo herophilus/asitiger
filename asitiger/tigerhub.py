@@ -122,3 +122,8 @@ class TigerHub:
         return self.send_command(
             f"{Commands.SETHOME.value} {self.format_coordinates(axes, flag_overrides=['+'])}"
         )
+
+    def here(self, coordinates: Dict[str, float]) -> str:
+        return self.send_command(
+            f"{Commands.HERE.value} {self.format_coordinates(coordinates)}"
+        )
