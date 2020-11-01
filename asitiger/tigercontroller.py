@@ -2,6 +2,7 @@ import time
 from contextlib import contextmanager
 from typing import Dict, List, Union
 
+from asitiger.axis import Axis
 from asitiger.commands import Commands
 from asitiger.errors import Errors
 from asitiger.serialconnection import SerialConnection
@@ -38,7 +39,7 @@ class TigerController:
 
     @classmethod
     def format_coordinates(
-        cls, coordinates: Dict[str, float], flag_overrides: List[str] = None
+        cls, coordinates: Dict[str, Union[float, str]], flag_overrides: List[str] = None
     ):
         return " ".join(
             map(
@@ -121,3 +122,14 @@ class TigerController:
         return self.send_command(
             f"{Commands.HERE.value} {self.format_coordinates(coordinates)}"
         )
+
+    def build(self, card_address: int = None) -> List[str]:
+        response = self.send_command(
+            self.command_with_address(
+                f"{Commands.BUILD.value} X", card_address=card_address
+            )
+        )
+        return response.split("\r")
+
+    def axes(self, card_address: int = None):
+        return Axis.get_axes_from_build(self.build(card_address=card_address))
