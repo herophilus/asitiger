@@ -33,6 +33,13 @@ class TigerController:
 
         return response
 
+    @staticmethod
+    def _cast_number(number_str: str):
+        try:
+            return int(number_str)
+        except ValueError:
+            return float(number_str)
+
     def is_busy(self) -> bool:
         return self.send_command(Command.STATUS) == "B"
 
@@ -48,6 +55,16 @@ class TigerController:
     def move(self, coordinates: Dict[str, float]):
         return self.send_command(Command.format(Command.MOVE, coordinates=coordinates))
 
+    def move_relative(self, offsets: Dict[str, float]):
+        axes = list(offsets.keys())
+        current_location = self.where(axes)
+
+        new_location = {
+            axis: float(current_location[axis]) + offsets[axis] for axis in axes
+        }
+
+        self.move(new_location)
+
     def led(self, led_brightnesses: Dict[str, int], card_address: int = None):
         self.send_command(
             Command.format(
@@ -56,10 +73,12 @@ class TigerController:
         )
 
     def where(self, axes: List[str]) -> dict:
-        response = self.send_command(f"{Command.WHERE.value} {' '.join(axes)}")
+        response = self.send_command(f"{Command.WHERE} {' '.join(axes)}")
         coordinates = response.split(" ")[1:]
 
-        return {axis: coord for axis, coord in zip(axes, coordinates)}
+        return {
+            axis: self._cast_number(coord) for axis, coord in zip(axes, coordinates)
+        }
 
     def who(self) -> List[str]:
         return self.send_command(Command.WHO.value).split("\r")
