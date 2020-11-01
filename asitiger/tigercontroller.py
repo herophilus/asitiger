@@ -48,19 +48,10 @@ class TigerController:
     def move(self, coordinates: Dict[str, float]):
         return self.send_command(Command.format(Command.MOVE, coordinates=coordinates))
 
-    def set_led_brightness(
-        self, led_brightnesses: Union[Dict[str, int], int], card_address: int = None
-    ):
-
-        led_coords = (
-            {"X": led_brightnesses}
-            if isinstance(led_brightnesses, int)
-            else led_brightnesses
-        )
-
+    def led(self, led_brightnesses: Dict[str, int], card_address: int = None):
         self.send_command(
             Command.format(
-                Command.LED, coordinates=led_coords, card_address=card_address
+                Command.LED, coordinates=led_brightnesses, card_address=card_address
             )
         )
 
