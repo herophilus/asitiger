@@ -52,20 +52,20 @@ class TigerController:
 
         return {key: cast(value) for key, value in key_value_pairs}
 
+    # The methods below are higher-level convenience methods that
+    # don't necessarily map directly onto supported serial commands
+
+    def axes(self, card_address: int = None) -> List[Axis.AxisInfo]:
+        return Axis.get_axes_from_build(self.build(card_address=card_address))
+
     def is_busy(self) -> bool:
-        return self.send_command(Command.STATUS) == "B"
+        return self.status() is Status.BUSY
 
     def wait_until_idle(self, poll_interval_s: float = None):
         poll_interval_s = poll_interval_s if poll_interval_s else self.poll_interval_s
 
         while self.is_busy():
             time.sleep(poll_interval_s)
-
-    def home(self, axes: List[str]) -> str:
-        return self.send_command(f"{Command.HOME} {' '.join(axes)}")
-
-    def move(self, coordinates: Dict[str, float]):
-        return self.send_command(Command.format(Command.MOVE, coordinates=coordinates))
 
     def move_relative(self, offsets: Dict[str, float]):
         axes = list(offsets.keys())
@@ -77,12 +77,45 @@ class TigerController:
 
         self.move(new_location)
 
+    # The methods below map directly onto the Tiger serial API methods
+
+    def build(self, card_address: int = None) -> List[str]:
+        response = self.send_command(
+            Command.format(f"{Command.BUILD} X", card_address=card_address)
+        )
+        return response.split("\r")
+
+    def here(self, coordinates: Dict[str, float]) -> str:
+        return self.send_command(Command.format(Command.HERE, coordinates=coordinates))
+
+    def home(self, axes: List[str]) -> str:
+        return self.send_command(f"{Command.HOME} {' '.join(axes)}")
+
     def led(self, led_brightnesses: Dict[str, int], card_address: int = None):
         self.send_command(
             Command.format(
                 Command.LED, coordinates=led_brightnesses, card_address=card_address
             )
         )
+
+    def move(self, coordinates: Dict[str, float]):
+        return self.send_command(Command.format(Command.MOVE, coordinates=coordinates))
+
+    def rdstat(self, axes: List[str]) -> List[Union[AxisStatus, Status]]:
+        response = self.send_command(f"{Command.RDSTAT} {' '.join(axes)}")
+        return statuses_for_rdstat(response)
+
+    def set_home(self, axes: Dict[str, Union[str, int]]) -> str:
+        return self.send_command(
+            Command.format(Command.SETHOME, coordinates=axes, flag_overrides=["+"])
+        )
+
+    def speed(self, axes: Dict[str, Union[str, float]]) -> Dict[str, float]:
+        command = Command.format(Command.SPEED, coordinates=axes, flag_overrides=["?"])
+        return self._dict_from_response(self.send_command(command))
+
+    def status(self) -> Status:
+        return Status(self.send_command(Command.STATUS))
 
     def where(self, axes: List[str]) -> dict:
         response = self.send_command(f"{Command.WHERE} {' '.join(axes)}")
@@ -93,29 +126,4 @@ class TigerController:
         }
 
     def who(self) -> List[str]:
-        return self.send_command(Command.WHO.value).split("\r")
-
-    def set_home(self, axes: Dict[str, Union[str, int]]) -> str:
-        return self.send_command(
-            Command.format(Command.SETHOME, coordinates=axes, flag_overrides=["+"])
-        )
-
-    def here(self, coordinates: Dict[str, float]) -> str:
-        return self.send_command(Command.format(Command.HERE, coordinates=coordinates))
-
-    def build(self, card_address: int = None) -> List[str]:
-        response = self.send_command(
-            Command.format(f"{Command.BUILD} X", card_address=card_address)
-        )
-        return response.split("\r")
-
-    def axes(self, card_address: int = None) -> List[Axis.AxisInfo]:
-        return Axis.get_axes_from_build(self.build(card_address=card_address))
-
-    def rdstat(self, axes: List[str]) -> List[Union[AxisStatus, Status]]:
-        response = self.send_command(f"{Command.RDSTAT} {' '.join(axes)}")
-        return statuses_for_rdstat(response)
-
-    def speed(self, axes: Dict[str, Union[str, float]]) -> Dict[str, float]:
-        command = Command.format(Command.SPEED, coordinates=axes, flag_overrides=["?"])
-        return self._dict_from_response(self.send_command(command))
+        return self.send_command(Command.WHO).split("\r")
