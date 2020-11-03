@@ -1,7 +1,7 @@
 import re
 from collections import namedtuple
 from enum import Enum
-from typing import Union
+from typing import List, Union
 
 
 class Status(Enum):
@@ -71,7 +71,7 @@ AxisStatus = namedtuple(
 )
 
 
-def status_from_decimal(status_byte_dec: Union[str, int]):
+def status_from_decimal(status_byte_dec: Union[str, int]) -> AxisStatus:
     status_bits = list(map(int, f"{int(status_byte_dec):08b}"))
 
     statuses = [
@@ -81,14 +81,14 @@ def status_from_decimal(status_byte_dec: Union[str, int]):
     return AxisStatus(*statuses)
 
 
-def status_for_rdstat(axis_response: str):
+def status_for_rdstat(axis_response: str) -> Union[Status, AxisStatus]:
     try:
         return Status(axis_response)
     except ValueError:
         return status_from_decimal(axis_response)
 
 
-def statuses_for_rdstat(response: str):
+def statuses_for_rdstat(response: str) -> List[AxisStatus]:
     # This funny business is required because the tiger controller
     # is inconsistent with its use of spaces in its responses, e.g.:
     # $ RS X Y? Z
