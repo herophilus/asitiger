@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 import serial
 
-LOGGER = logging.getLogger("asitiger.serialconnection")
+LOGGER = logging.getLogger(__name__)
 
 
 class SerialConnection:
