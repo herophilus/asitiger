@@ -1,4 +1,7 @@
+import logging
 from typing import Dict, List, Union
+
+LOGGER = logging.getLogger("asitiger.command")
 
 
 class Command:
@@ -12,6 +15,8 @@ class Command:
     STATUS = "/"
     WHERE = "W"
     WHO = "WHO"
+
+    _NUMERAL_MAX_LENGTH = 16
 
     @classmethod
     def format(
@@ -45,13 +50,20 @@ class Command:
             )
         )
 
-    @staticmethod
+    @classmethod
     def format_coordinate(
-        axis: str, value: Union[str, float], flag_overrides: List[str] = None
+        cls, axis: str, value: Union[str, float], flag_overrides: List[str] = None
     ) -> str:
         value_is_flag = flag_overrides and value in flag_overrides
 
         if value_is_flag:
             return f"{axis}{value}"
+
+        if len(str(value)) > cls._NUMERAL_MAX_LENGTH:
+            truncated_value = str(value)[: cls._NUMERAL_MAX_LENGTH]
+            LOGGER.warning(
+                f'Numeral "{value}" is too long for the instrument, it will be truncated to: "{truncated_value}"'
+            )
+            value = truncated_value
 
         return f"{axis}={value}"
