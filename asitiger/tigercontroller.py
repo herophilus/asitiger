@@ -5,6 +5,7 @@ from asitiger.axis import Axis
 from asitiger.command import Command
 from asitiger.errors import Errors
 from asitiger.serialconnection import SerialConnection
+from asitiger.status import statuses_for_rdstat
 
 
 class TigerController:
@@ -99,3 +100,7 @@ class TigerController:
 
     def axes(self, card_address: int = None):
         return Axis.get_axes_from_build(self.build(card_address=card_address))
+
+    def rdstat(self, axes: List[str]):
+        response = self.send_command(f"{Command.RDSTAT} {' '.join(axes)}")
+        return statuses_for_rdstat(response)
