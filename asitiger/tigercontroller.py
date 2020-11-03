@@ -1,5 +1,6 @@
+import re
 import time
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 from asitiger.axis import Axis
 from asitiger.command import Command
@@ -40,6 +41,16 @@ class TigerController:
             return int(number_str)
         except ValueError:
             return float(number_str)
+
+    @staticmethod
+    def _dict_from_response(
+        serial_response: str, cast_values_to=None
+    ) -> Dict[str, Any]:
+        tokens = re.split(r"\s+", serial_response.strip())
+        key_value_pairs = map(lambda pair: pair.split("="), tokens[1:])
+        cast = cast_values_to if cast_values_to is not None else lambda value: value
+
+        return {key: cast(value) for key, value in key_value_pairs}
 
     def is_busy(self) -> bool:
         return self.send_command(Command.STATUS) == "B"
@@ -104,3 +115,7 @@ class TigerController:
     def rdstat(self, axes: List[str]) -> List[Union[AxisStatus, Status]]:
         response = self.send_command(f"{Command.RDSTAT} {' '.join(axes)}")
         return statuses_for_rdstat(response)
+
+    def speed(self, axes: Dict[str, Union[str, float]]) -> Dict[str, float]:
+        command = Command.format(Command.SPEED, coordinates=axes, flag_overrides=["?"])
+        return self._dict_from_response(self.send_command(command))

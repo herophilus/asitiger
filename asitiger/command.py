@@ -12,6 +12,7 @@ class Command:
     MOVE = "M"
     RDSTAT = "RS"
     SETHOME = "HM"
+    SPEED = "S"
     STATUS = "/"
     WHERE = "W"
     WHO = "WHO"
