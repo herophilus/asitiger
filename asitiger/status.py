@@ -75,7 +75,8 @@ def status_from_decimal(status_byte_dec: Union[str, int]) -> AxisStatus:
     status_bits = list(map(int, f"{int(status_byte_dec):08b}"))
 
     statuses = [
-        EnumClass(bit) for EnumClass, bit in zip(_STATUS_BYTE_BITMAP, status_bits)
+        EnumClass(bit)
+        for EnumClass, bit in zip(_STATUS_BYTE_BITMAP, reversed(status_bits))
     ]
 
     return AxisStatus(*statuses)
