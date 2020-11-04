@@ -28,7 +28,7 @@ class Axis:
         ZOOM = "m"
 
     @classmethod
-    def get_axes_from_build(cls, build_response: List[str]) -> List[AxisInfo]:
+    def get_axes_from_build(cls, build_response: List[str]) -> List["AxisInfo"]:
         info = cls._make_build_info_dict(build_response)
 
         axes = [
