@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as readme_file:
 
 setuptools.setup(
     name="asitiger",
-    version="0.0.4",
+    version="0.0.5",
     author="Chili Johnson",
     author_email="chilij@chilij.com",
     description="A thin Python interface for communicating with ASI Tiger Controllers",
