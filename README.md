@@ -77,6 +77,25 @@ tiger.led({"X": 75})
 tiger.led({"X": 100, "Y": 0, "Z": 0, "F": 100}, card_address=7)
 ```
 
+### Lock or unlock a well plate
+To change the position of a servo or solenoid well plate lock insert, use the higher-level `set_plate_lock` method, for lower-level control, you can use the `secure` method:
+
+```python
+from asitiger.secure import SecurePosition
+
+# Unlock a plate (servo or solenoid)
+tiger.set_plate_lock(SecurePosition.UNLOCKED, card_address=2)
+
+# Lock a plate (servo or solenoid)
+tiger.set_plate_lock(SecurePosition.LOCKED, card_address=2)
+
+# Set the lock to a halfway position (servo only)
+tiger.set_plate_lock(0.5)
+
+# Set the auto-lock time to 3 minutes:
+tiger.secure({"F": 3})
+```
+
 ### Inspect available axes
 You can inspect which cards/axes are installed, or query for axes on specific cards via the optional `card_address` keyword arg:
 
@@ -111,5 +130,31 @@ print(x_axis_status)
 # )
 ```
 
+### Send commands manually
+If a command you want to send isn't currently supported as a first-class method, or you just want to send commands directly as strings:
+
+```python
+tiger.send_command("CDATE")
+# 'Apr 30 2019:08:48:59'
+```
+
+This method will still detect and raise an exception when the controller responds with an error code.
+
 ## Logging
 This library logs through the `logging` standard library, but adds a default null handler. If you'd like to see logs from this library, activate logging for the `asitiger` logger, which is the parent logger under which all loggers for this library live.
+
+```python
+import logging
+
+logging.basicConfig()
+logging.getLogger("asitiger").setLevel(logging.DEBUG)
+
+tiger.where(["X", "Y"])
+tiger.move_relative({"X": -10000, "Y": 10000})
+
+# Log messages:
+# DEBUG:asitiger.serialconnection:Sending data: b'W X Y\r'
+# DEBUG:asitiger.serialconnection:Received: b':A -989110.5 -1042395.0 \r\n'
+# DEBUG:asitiger.serialconnection:Sending data: b'R X=-10000 Y=10000\r'
+# DEBUG:asitiger.serialconnection:Received: b':A \r\n'
+```
