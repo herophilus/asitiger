@@ -75,6 +75,9 @@ class TigerController:
         )
         return response.split("\r")
 
+    def halt(self):
+        self.send_command(Command.HALT)
+
     def here(self, coordinates: Dict[str, float]) -> str:
         return self.send_command(Command.format(Command.HERE, coordinates=coordinates))
 
