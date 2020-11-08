@@ -67,16 +67,6 @@ class TigerController:
         while self.is_busy():
             time.sleep(poll_interval_s)
 
-    def move_relative(self, offsets: Dict[str, float]):
-        axes = list(offsets.keys())
-        current_location = self.where(axes)
-
-        new_location = {
-            axis: float(current_location[axis]) + offsets[axis] for axis in axes
-        }
-
-        self.move(new_location)
-
     # The methods below map directly onto the Tiger serial API methods
 
     def build(self, card_address: int = None) -> List[str]:
@@ -100,6 +90,9 @@ class TigerController:
 
     def move(self, coordinates: Dict[str, float]):
         return self.send_command(Command.format(Command.MOVE, coordinates=coordinates))
+
+    def move_relative(self, offsets: Dict[str, float]):
+        return self.send_command(Command.format(Command.MOVREL, coordinates=offsets))
 
     def rdstat(self, axes: List[str]) -> List[Union[AxisStatus, Status]]:
         response = self.send_command(f"{Command.RDSTAT} {' '.join(axes)}")

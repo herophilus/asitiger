@@ -10,6 +10,7 @@ class Command:
     HOME = "!"
     LED = "LED"
     MOVE = "M"
+    MOVREL = "R"
     RDSTAT = "RS"
     SETHOME = "HM"
     SPEED = "S"
