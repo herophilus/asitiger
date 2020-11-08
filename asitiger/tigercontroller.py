@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Union
 from asitiger.axis import Axis
 from asitiger.command import Command
 from asitiger.errors import Errors
+from asitiger.secure import SecurePosition
 from asitiger.serialconnection import SerialConnection
 from asitiger.status import AxisStatus, Status, statuses_for_rdstat
 
@@ -73,6 +74,13 @@ class TigerController:
     def disable_axes(self, axes: List[str]):
         self.motor_control({axis: "-" for axis in axes})
 
+    def set_plate_lock(
+        self, position: Union[SecurePosition, float], card_address: int = None
+    ):
+        return self.secure(
+            {"X": SecurePosition.resolve_value(position)}, card_address=card_address
+        )
+
     # The methods below map directly onto the Tiger serial API methods
 
     def build(self, card_address: int = None) -> List[str]:
@@ -111,6 +119,13 @@ class TigerController:
     def rdstat(self, axes: List[str]) -> List[Union[AxisStatus, Status]]:
         response = self.send_command(f"{Command.RDSTAT} {' '.join(axes)}")
         return statuses_for_rdstat(response)
+
+    def secure(
+        self, settings: Dict[str, Union[int, float, str]], card_address: int = None,
+    ):
+        self.send_command(
+            Command.format(Command.SECURE, settings, card_address=card_address)
+        )
 
     def set_home(self, axes: Dict[str, Union[str, int]]) -> str:
         return self.send_command(

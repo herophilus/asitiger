@@ -14,6 +14,7 @@ class Command:
     MOVE = "M"
     MOVREL = "R"
     RDSTAT = "RS"
+    SECURE = "SECURE"
     SETHOME = "HM"
     SPEED = "S"
     STATUS = "/"
