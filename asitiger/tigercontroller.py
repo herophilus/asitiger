@@ -67,6 +67,12 @@ class TigerController:
         while self.is_busy():
             time.sleep(poll_interval_s)
 
+    def enable_axes(self, axes: List[str]):
+        self.motor_control({axis: "+" for axis in axes})
+
+    def disable_axes(self, axes: List[str]):
+        self.motor_control({axis: "-" for axis in axes})
+
     # The methods below map directly onto the Tiger serial API methods
 
     def build(self, card_address: int = None) -> List[str]:
@@ -89,6 +95,11 @@ class TigerController:
             Command.format(
                 Command.LED, coordinates=led_brightnesses, card_address=card_address
             )
+        )
+
+    def motor_control(self, axes_states: Dict[str, str]):
+        self.send_command(
+            Command.format(Command.MOTCTRL, axes_states, flag_overrides=["+", "-"])
         )
 
     def move(self, coordinates: Dict[str, float]):

@@ -10,6 +10,7 @@ class Command:
     HERE = "H"
     HOME = "!"
     LED = "LED"
+    MOTCTRL = "MC"
     MOVE = "M"
     MOVREL = "R"
     RDSTAT = "RS"
