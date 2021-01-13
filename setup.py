@@ -17,7 +17,8 @@ setuptools.setup(
     python_requires=">=3.6",
     install_requires=["pyserial>=3.0"],
     extras_require={
-        "dev": ["black==19.10b0", "flake8-bugbear==19.8.0", "pre-commit>=2.7.1"]
+        "dev": ["black==19.10b0", "flake8-bugbear==19.8.0", "pre-commit>=2.7.1"],
+        "test": ["pytest==6.1.2"],
     },
     classifiers=[
         "Programming Language :: Python :: 3",
