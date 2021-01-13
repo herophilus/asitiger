@@ -1,4 +1,6 @@
 # ASITiger — A Python interface for ASI Tiger Controllers
+![Build and release](https://github.com/System1Bio/asitiger/workflows/Build%20and%20release/badge.svg)
+
 This is a Python package which provides a thin interface for communicating with [ASI TG-1000 "Tiger" Controllers](http://www.asiimaging.com/controllers/tiger-controller/). This package is concerned with making low-level interactions with Tiger Controllers easier by providing Python-native arguments to commands, and by parsing out convoluted responses and errors into nicer Python primitives.
 
 Most methods map directly onto the identically named serial command described in the [ASI serial commands documentation](http://asiimaging.com/docs/products/tiger#serial_commands). Some methods—such as `axes`—build upon other commands to provide a more useful interface over somewhat-cryptic serial responses.
