@@ -1,4 +1,5 @@
 # ASITiger — A Python interface for ASI Tiger Controllers
+
 ![Build and release](https://github.com/System1Bio/asitiger/workflows/Build%20and%20release/badge.svg)
 
 This is a Python package which provides a thin interface for communicating with [ASI TG-1000 "Tiger" Controllers](http://www.asiimaging.com/controllers/tiger-controller/). This package is concerned with making low-level interactions with Tiger Controllers easier by providing Python-native arguments to commands, and by parsing out convoluted responses and errors into nicer Python primitives.
@@ -6,19 +7,23 @@ This is a Python package which provides a thin interface for communicating with 
 Most methods map directly onto the identically named serial command described in the [ASI serial commands documentation](http://asiimaging.com/docs/products/tiger#serial_commands). Some methods—such as `axes`—build upon other commands to provide a more useful interface over somewhat-cryptic serial responses.
 
 ## Caveats
+
 This package is very new and therefore has very few commands actually implemented. I also don't have access to every single ASI Tiger card to be able to test all commands in the serial API. If you'd like more commands added, please open an issue or PR.
 
 For commands which this package doesn't expose an explicit method for yet, you may be able to get away with using the `TigerController#send_command(cmd)` method, which will allow you to send any arbitrary commands, and knows how to raise exceptions for each known failure response.
 
 ## Installation
+
 This package is available on PyPI:
 
 ```shell
 $ pip install asitiger
 ```
+
 Note: This package has only been tested on Linux, if you run into issues on other operating systems, please open an issue.
 
 ## Usage
+
 Commands are represented by methods on an `asitiger.TigerController` object, which can be created from the serial port / COM device it's connected to:
 
 ```python
@@ -31,9 +36,11 @@ tiger.connection.disconnect()
 ```
 
 ## Examples
+
 Here are a few examples showing some of the things you can do. These examples assume you have `TigerController` object named `tiger`, like shown in the **Usage** section.
 
 ### Check if any motors are busy
+
 You can check to see if any motors are active, and wait for all motors to become idle:
 
 ```python
@@ -44,6 +51,7 @@ tiger.is_busy() # False
 ```
 
 ### Check and set axis speed
+
 Speeds can be get/set through the `speed` method:
 
 ```python
@@ -57,6 +65,7 @@ tiger.speed({"X": "?"})
 ```
 
 ### Move one or more axes
+
 One or more axes can be moved at once, and moves can be sequenced with waits in between:
 
 ```python
@@ -68,6 +77,7 @@ tiger.move_relative({"X": -10000, "Y": -20000})
 ```
 
 ### Change LED intensity
+
 You can change the intensity of the default LED (on your XYStage card) or directly address a TGLED card:
 
 ```python
@@ -80,6 +90,7 @@ tiger.led({"X": 100, "Y": 0, "Z": 0, "F": 100}, card_address=7)
 ```
 
 ### Lock or unlock a well plate
+
 To change the position of a servo or solenoid well plate lock insert, use the higher-level `set_plate_lock` method, for lower-level control, you can use the `secure` method:
 
 ```python
@@ -99,6 +110,7 @@ tiger.secure({"F": 3})
 ```
 
 ### Inspect available axes
+
 You can inspect which cards/axes are installed, or query for axes on specific cards via the optional `card_address` keyword arg:
 
 ```python
@@ -113,6 +125,7 @@ tiger.axes()
 ```
 
 ### Check the detailed status of axes
+
 Here the statuses of axes `X` and `O` are checked at the same time:
 
 ```python
@@ -133,6 +146,7 @@ print(x_axis_status)
 ```
 
 ### Send commands manually
+
 If a command you want to send isn't currently supported as a first-class method, or you just want to send commands directly as strings:
 
 ```python
@@ -143,6 +157,7 @@ tiger.send_command("CDATE")
 This method will still detect and raise an exception when the controller responds with an error code.
 
 ## Logging
+
 This library logs through the `logging` standard library, but adds a default null handler. If you'd like to see logs from this library, activate logging for the `asitiger` logger, which is the parent logger under which all loggers for this library live.
 
 ```python
