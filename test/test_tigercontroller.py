@@ -29,3 +29,16 @@ def test_parse_response_dict_cast():
 def test_cast_number():
     assert TigerController._cast_number("1") == 1
     assert TigerController._cast_number("2.1") == 2.1
+
+
+def test_send_command_error(tiger):
+    tiger.connection.read_response.return_value = "response"
+
+    assert tiger.send_command("command") == "response"
+
+
+def test_send_command(tiger):
+    tiger.connection.read_response.return_value = ":N-2"
+
+    with pytest.raises(Exception):
+        tiger.send_command("Nice")
